@@ -42,34 +42,16 @@ and its report section.
 Values in the theme configs marked ASSUMED (simulated sensor ranges, the OS3 pedestrian threshold,
 OS3/OS5 TTLs) are not given in the handbook: confirm them with your team.
 
-## The 25 tasks (fill in the owner column)
-| ID | Scenario | File | Owner |
-|---|---|---|---|
-| OS1-1 | Local Room Sensor Ingestion & Cached Inventory | `src/edge/teams/os1_building/s1_ingestion.py` | |
-| OS1-2 | Competing Occupancy Writers & Race Condition Demonstration | `src/edge/teams/os1_building/s2_race_condition.py` | |
-| OS1-3 | Local Ventilation Rule & Damper Actuator Dispatch | `src/edge/teams/os1_building/s3_ventilation_rule.py` | |
-| OS1-4 | Contention Profiling & Resource Sampling | `src/edge/teams/os1_building/s4_contention_profiling.py` | |
-| OS1-5 | Signature WAN Outage & Offline Outbox Queueing | `src/edge/teams/os1_building/s5_wan_outage.py` | |
-| OS2-1 | Multi-Process Robot Architecture & IPC Topology | `src/edge/teams/os2_robot/s1_robot_ipc_topology.py` | |
-| OS2-2 | Periodic Monotonic Deadlines & Jitter Measurement | `src/edge/teams/os2_robot/s2_jitter.py` | |
-| OS2-3 | Obstacle Proximity E-Stop & Actuator Command Expiry | `src/edge/teams/os2_robot/s3_estop_ttl.py` | |
-| OS2-4 | Worker Crash & Supervised Automatic Restart | `src/edge/teams/os2_robot/s4_crash_restart.py` | |
-| OS2-5 | Autonomous Offline Pathway Navigation | `src/edge/teams/os2_robot/s5_offline_navigation.py` | |
-| OS3-1 | Incheon Bus Stop Context & Vehicle Influx Stream | `src/edge/teams/os3_mobility/s1_bus_stop_context.py` | |
-| OS3-2 | Priority-Aware Bounded Queue Processing | `src/edge/teams/os3_mobility/s2_priority_queue.py` | |
-| OS3-3 | Overload Experiment & Drop Policy Verification | `src/edge/teams/os3_mobility/s3_overload_drop.py` | |
-| OS3-4 | Transactional State Update & Version Guarding | `src/edge/teams/os3_mobility/s4_versioned_transactions.py` | |
-| OS3-5 | Offline Variable Speed Sign Dispatch & Event Replay | `src/edge/teams/os3_mobility/s5_speed_sign_replay.py` | |
-| OS4-1 | Heterogeneous Multi-Stream Sensor Ingestion | `src/edge/teams/os4_iot/s1_multistream_ingestion.py` | |
-| OS4-2 | Event-Time vs. Receipt-Time Handling | `src/edge/teams/os4_iot/s2_event_vs_receipt_time.py` | |
-| OS4-3 | Dust Suppression Mist Cannon Relay Actuation | `src/edge/teams/os4_iot/s3_mist_cannon.py` | |
-| OS4-4 | Scheduled Database Backup via systemd Timer / Cron | `src/edge/teams/os4_iot/s4_scheduled_backup.py` | |
-| OS4-5 | WAN Outage Backlog Drain & AirKorea Baseline Benchmark | `src/edge/teams/os4_iot/s5_backlog_drain.py` | |
-| OS5-1 | Health Check Architecture & Readiness State Machine | `src/edge/teams/os5_reliable/s1_health_probes.py` | |
-| OS5-2 | Disposable Worker Kill & Preserved State Recovery | `src/edge/teams/os5_reliable/s2_worker_kill_recovery.py` | |
-| OS5-3 | Deadlock Detection & Mutex Timeout Recovery | `src/edge/teams/os5_reliable/s3_deadlock_timeout.py` | |
-| OS5-4 | Disaster Flood Relief Sluice Gate Actuation | `src/edge/teams/os5_reliable/s4_sluice_gate.py` | |
-| OS5-5 | Compound Failure Survivability (WAN Cut + Worker Crash) | `src/edge/teams/os5_reliable/s5_compound_failure.py` | |
+## Teams and their 25 scenarios (fill in the members column)
+Each mini team owns one theme: its folder, its config, its `tests/<theme>/` folder, and its 5 scenarios.
+
+| Team | Theme | Folder | Config | Port | Members | Scenarios (one file each) |
+|---|---|---|---|---|---|---|
+| Team 1 | OS1 Smart Building Edge Gateway | `src/edge/teams/os1_building/` | `config/os1.yaml` | 8001 | | OS1-1 Local Room Sensor Ingestion & Cached Inventory<br>OS1-2 Competing Occupancy Writers & Race Condition Demonstration<br>OS1-3 Local Ventilation Rule & Damper Actuator Dispatch<br>OS1-4 Contention Profiling & Resource Sampling<br>OS1-5 Signature WAN Outage & Offline Outbox Queueing |
+| Team 2 | OS2 Robot Edge Controller | `src/edge/teams/os2_robot/` | `config/os2.yaml` | 8002 | | OS2-1 Multi-Process Robot Architecture & IPC Topology<br>OS2-2 Periodic Monotonic Deadlines & Jitter Measurement<br>OS2-3 Obstacle Proximity E-Stop & Actuator Command Expiry<br>OS2-4 Worker Crash & Supervised Automatic Restart<br>OS2-5 Autonomous Offline Pathway Navigation |
+| Team 3 | OS3 Autonomous Mobility Edge Node | `src/edge/teams/os3_mobility/` | `config/os3.yaml` | 8003 | | OS3-1 Incheon Bus Stop Context & Vehicle Influx Stream<br>OS3-2 Priority-Aware Bounded Queue Processing<br>OS3-3 Overload Experiment & Drop Policy Verification<br>OS3-4 Transactional State Update & Version Guarding<br>OS3-5 Offline Variable Speed Sign Dispatch & Event Replay |
+| Team 4 | OS4 IoT Edge Gateway | `src/edge/teams/os4_iot/` | `config/os4.yaml` | 8004 | | OS4-1 Heterogeneous Multi-Stream Sensor Ingestion<br>OS4-2 Event-Time vs. Receipt-Time Handling<br>OS4-3 Dust Suppression Mist Cannon Relay Actuation<br>OS4-4 Scheduled Database Backup via systemd Timer / Cron<br>OS4-5 WAN Outage Backlog Drain & AirKorea Baseline Benchmark |
+| Team 5 | OS5 Fault-Tolerant Smart-City Node | `src/edge/teams/os5_reliable/` | `config/os5.yaml` | 8005 | | OS5-1 Health Check Architecture & Readiness State Machine<br>OS5-2 Disposable Worker Kill & Preserved State Recovery<br>OS5-3 Deadlock Detection & Mutex Timeout Recovery<br>OS5-4 Disaster Flood Relief Sluice Gate Actuation<br>OS5-5 Compound Failure Survivability (WAN Cut + Worker Crash) |
 
 ## Done vs. still to build
 **Done and tested:** bounded queue (drop_oldest), Unix socket framing, SQLite WAL + atomic

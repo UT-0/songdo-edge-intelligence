@@ -1,0 +1,42 @@
+# OS3: Autonomous Mobility Edge Node (Techno-Park Intersection)
+# Values marked ASSUMED are not given in the handbook: confirm or change them.
+node:
+  id: EDGE_NODE_OS3_MOBILITY
+  lat: 37.382
+  lon: 126.656
+
+paths:
+  db: data/os3.db
+  backups: data/backups
+  pidfile: data/run/os3_pids.json
+  schema: sql/schema.sql
+  static: src/edge/ui
+  socket: /tmp/songdo_os3.sock
+
+network:
+  api_host: 127.0.0.1
+  api_port: 8003
+
+ipc:
+  queue_maxsize: 500
+
+sensor:
+  interval_s: 0.5
+  streams:   # simulated values are ASSUMED
+    - {name: RADAR_SPEED, unit: km_h, base: 45, noise: 6, spike_prob: 0.0, spike_value: 45}
+    - {name: PED_CROSSWALK_COUNT, unit: count, base: 3, noise: 1, spike_prob: 0.05, spike_value: 15}
+
+rules:
+  - {name: ped_surge_speed_sign, sensor: PED_CROSSWALK_COUNT, op: ">", threshold: 10, actuator: VARIABLE_SPEED_SIGN_KMH, command: 30, ttl_s: 60.0}
+
+supervisor:
+  max_restarts: 5
+  window_s: 60
+  restart_delay_s: 0.5
+
+sync:
+  batch_size: 50
+  interval_s: 1.0
+
+health:
+  interval_s: 2.0

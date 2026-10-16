@@ -1,0 +1,552 @@
+{
+  "source": "Incheon BIS bus stop sequences (data.go.kr), route-stop CSV",
+  "source_file": "incheon_bis_route_stops_20260630.csv",
+  "reference_date": "2026-06-30",
+  "sample": false,
+  "note": "Stops selected by exact name (Songdo Techno-Park). The CSV has no coordinates. Route number '01월 16일' is how the source file spells what is most likely route 1-16 (a spreadsheet date conversion); it is kept unchanged.",
+  "node_id": "EDGE_NODE_OS3_MOBILITY",
+  "node_name": "Techno-Park Intersection, Songdo",
+  "csv_rows": 26308,
+  "distinct_routes_in_csv": 357,
+  "stops": [
+    {
+      "stop_id": "164000421",
+      "stop_number": "38421",
+      "stop_name": "테크노파크역",
+      "routes": [
+        {
+          "route_number": "01월 16일",
+          "route_id": "165000201",
+          "company": "송도버스",
+          "sequence": 138,
+          "of_stops": 166,
+          "direction": "down",
+          "prev_stop": "테크노파크IT센타",
+          "next_stop": "한국생산기술연구원"
+        },
+        {
+          "route_number": "303-1",
+          "route_id": "165000350",
+          "company": "강인교통",
+          "sequence": 21,
+          "of_stops": 77,
+          "direction": "up",
+          "prev_stop": "테크노파크IT센터",
+          "next_stop": "웰카운티2단지"
+        },
+        {
+          "route_number": "320",
+          "route_id": "165000392",
+          "company": "대인교통",
+          "sequence": 61,
+          "of_stops": 126,
+          "direction": "down",
+          "prev_stop": "캠퍼스타운역",
+          "next_stop": "테크노파크역"
+        },
+        {
+          "route_number": "320",
+          "route_id": "165000392",
+          "company": "원진운수",
+          "sequence": 61,
+          "of_stops": 126,
+          "direction": "down",
+          "prev_stop": "테크노파크역",
+          "next_stop": "웰카운티2단지"
+        },
+        {
+          "route_number": "4",
+          "route_id": "165000004",
+          "company": "삼환교통",
+          "sequence": 168,
+          "of_stops": 173,
+          "direction": "down",
+          "prev_stop": "캠퍼스타운역",
+          "next_stop": "연수구청제2청사"
+        },
+        {
+          "route_number": "4401",
+          "route_id": "161000027",
+          "company": "삼환교통",
+          "sequence": 4,
+          "of_stops": 74,
+          "direction": "up",
+          "prev_stop": "테크노파크IT센터",
+          "next_stop": "웰카운티2단지"
+        },
+        {
+          "route_number": "6777-1",
+          "route_id": "161000022",
+          "company": "신흥교통",
+          "sequence": 7,
+          "of_stops": 34,
+          "direction": "up",
+          "prev_stop": "캠퍼스타운역",
+          "next_stop": "웰카운티2단지"
+        },
+        {
+          "route_number": "81",
+          "route_id": "165000442",
+          "company": "마니교통",
+          "sequence": 51,
+          "of_stops": 115,
+          "direction": "up",
+          "prev_stop": "캠퍼스타운역",
+          "next_stop": "송도누리공원"
+        },
+        {
+          "route_number": "9",
+          "route_id": "165000334",
+          "company": "성민버스",
+          "sequence": 8,
+          "of_stops": 143,
+          "direction": "up",
+          "prev_stop": "테크노파크IT센터",
+          "next_stop": "송도누리공원"
+        },
+        {
+          "route_number": "M6450",
+          "route_id": "161000004",
+          "company": "신동아교통",
+          "sequence": 40,
+          "of_stops": 46,
+          "direction": "down",
+          "prev_stop": "캠퍼스타운역",
+          "next_stop": "웰카운티1단지"
+        },
+        {
+          "route_number": "급행91",
+          "route_id": "166000010",
+          "company": "강인여객",
+          "sequence": 4,
+          "of_stops": 72,
+          "direction": "up",
+          "prev_stop": "캠퍼스타운역",
+          "next_stop": "웰카운티2단지"
+        },
+        {
+          "route_number": "급행99",
+          "route_id": "161000008",
+          "company": "삼환교통",
+          "sequence": 57,
+          "of_stops": 66,
+          "direction": "down",
+          "prev_stop": "캠퍼스타운역",
+          "next_stop": "송도누리공원"
+        },
+        {
+          "route_number": "순환43",
+          "route_id": "165000516",
+          "company": "인천교통공사",
+          "sequence": 29,
+          "of_stops": 80,
+          "direction": "up",
+          "prev_stop": "한국단자공업연구소",
+          "next_stop": "송도누리공원"
+        },
+        {
+          "route_number": "연수02",
+          "route_id": "161000035",
+          "company": "인천그린모빌리티(주)",
+          "sequence": 9,
+          "of_stops": 17,
+          "direction": "down",
+          "prev_stop": "테크노파크IT센터",
+          "next_stop": "연수구청제2청사"
+        },
+        {
+          "route_number": "연수03",
+          "route_id": "161000036",
+          "company": "인천그린모빌리티(주)",
+          "sequence": 34,
+          "of_stops": 34,
+          "direction": "down",
+          "prev_stop": "캠퍼스타운역",
+          "next_stop": null
+        }
+      ]
+    },
+    {
+      "stop_id": "164000422",
+      "stop_number": "38422",
+      "stop_name": "테크노파크역",
+      "routes": [
+        {
+          "route_number": "01월 16일",
+          "route_id": "165000201",
+          "company": "송도버스",
+          "sequence": 30,
+          "of_stops": 166,
+          "direction": "up",
+          "prev_stop": "생산기술연구원",
+          "next_stop": "테크노파크IT센타"
+        },
+        {
+          "route_number": "303-1",
+          "route_id": "165000350",
+          "company": "강인교통",
+          "sequence": 58,
+          "of_stops": 77,
+          "direction": "down",
+          "prev_stop": "송도글로벌캠퍼스푸르지오아파트",
+          "next_stop": "송도테크노파크IT센터"
+        },
+        {
+          "route_number": "320",
+          "route_id": "165000392",
+          "company": "대인교통",
+          "sequence": 3,
+          "of_stops": 126,
+          "direction": "up",
+          "prev_stop": "송도글로벌캠퍼스푸르지오아파트",
+          "next_stop": "테크노파크역"
+        },
+        {
+          "route_number": "320",
+          "route_id": "165000392",
+          "company": "원진운수",
+          "sequence": 3,
+          "of_stops": 126,
+          "direction": "up",
+          "prev_stop": "테크노파크역",
+          "next_stop": "캠퍼스타운역"
+        },
+        {
+          "route_number": "4",
+          "route_id": "165000004",
+          "company": "삼환교통",
+          "sequence": 6,
+          "of_stops": 173,
+          "direction": "up",
+          "prev_stop": "연수구청제2청사",
+          "next_stop": "캠퍼스타운역"
+        },
+        {
+          "route_number": "4401",
+          "route_id": "161000027",
+          "company": "삼환교통",
+          "sequence": 67,
+          "of_stops": 74,
+          "direction": "down",
+          "prev_stop": "송도글로벌캠퍼스푸르지오아파트",
+          "next_stop": "송도테크노파크IT센터"
+        },
+        {
+          "route_number": "6777-1",
+          "route_id": "161000022",
+          "company": "신흥교통",
+          "sequence": 28,
+          "of_stops": 34,
+          "direction": "down",
+          "prev_stop": "송도글로벌캠퍼스푸르지오아파트",
+          "next_stop": "캠퍼스타운역"
+        },
+        {
+          "route_number": "81",
+          "route_id": "165000442",
+          "company": "마니교통",
+          "sequence": 66,
+          "of_stops": 115,
+          "direction": "down",
+          "prev_stop": "송도누리공원",
+          "next_stop": "캠퍼스타운역"
+        },
+        {
+          "route_number": "9",
+          "route_id": "165000334",
+          "company": "성민버스",
+          "sequence": 134,
+          "of_stops": 143,
+          "direction": "down",
+          "prev_stop": "송도누리공원",
+          "next_stop": "송도테크노파크IT센터"
+        },
+        {
+          "route_number": "M6450",
+          "route_id": "161000004",
+          "company": "신동아교통",
+          "sequence": 7,
+          "of_stops": 46,
+          "direction": "up",
+          "prev_stop": "송도더샵센트럴시티.글로벌캠퍼스푸르지오",
+          "next_stop": "캠퍼스타운역"
+        },
+        {
+          "route_number": "급행91",
+          "route_id": "166000010",
+          "company": "강인여객",
+          "sequence": 69,
+          "of_stops": 72,
+          "direction": "down",
+          "prev_stop": "송도글로벌캠퍼스푸르지오아파트",
+          "next_stop": "캠퍼스타운역"
+        },
+        {
+          "route_number": "급행99",
+          "route_id": "161000008",
+          "company": "삼환교통",
+          "sequence": 10,
+          "of_stops": 66,
+          "direction": "up",
+          "prev_stop": "송도누리공원",
+          "next_stop": "캠퍼스타운역"
+        },
+        {
+          "route_number": "순환43",
+          "route_id": "165000516",
+          "company": "인천교통공사",
+          "sequence": 53,
+          "of_stops": 80,
+          "direction": "down",
+          "prev_stop": "송도누리공원",
+          "next_stop": "한국단자공업연구소"
+        },
+        {
+          "route_number": "연수02",
+          "route_id": "161000035",
+          "company": "인천그린모빌리티(주)",
+          "sequence": 2,
+          "of_stops": 17,
+          "direction": "up",
+          "prev_stop": "연수구청제2청사",
+          "next_stop": "캠퍼스타운역"
+        },
+        {
+          "route_number": "연수03",
+          "route_id": "161000036",
+          "company": "인천그린모빌리티(주)",
+          "sequence": 1,
+          "of_stops": 34,
+          "direction": "up",
+          "prev_stop": null,
+          "next_stop": "캠퍼스타운역"
+        }
+      ]
+    },
+    {
+      "stop_id": "164000754",
+      "stop_number": "38752",
+      "stop_name": "송도테크노파크IT센터",
+      "routes": [
+        {
+          "route_number": "9",
+          "route_id": "165000334",
+          "company": "성민버스",
+          "sequence": 135,
+          "of_stops": 143,
+          "direction": "down",
+          "prev_stop": "테크노파크역",
+          "next_stop": "박문여자고등학교"
+        }
+      ]
+    },
+    {
+      "stop_id": "165000726",
+      "stop_number": "39726",
+      "stop_name": "테크노파크IT센타",
+      "routes": [
+        {
+          "route_number": "01월 16일",
+          "route_id": "165000201",
+          "company": "송도버스",
+          "sequence": 31,
+          "of_stops": 166,
+          "direction": "up",
+          "prev_stop": "테크노파크역",
+          "next_stop": "해모로월드뷰"
+        },
+        {
+          "route_number": "순환41",
+          "route_id": "165000514",
+          "company": "인천교통공사",
+          "sequence": 58,
+          "of_stops": 94,
+          "direction": "down",
+          "prev_stop": "캠퍼스타운역",
+          "next_stop": "해모로월드뷰"
+        }
+      ]
+    },
+    {
+      "stop_id": "165000727",
+      "stop_number": "39727",
+      "stop_name": "테크노파크IT센타",
+      "routes": [
+        {
+          "route_number": "01월 16일",
+          "route_id": "165000201",
+          "company": "송도버스",
+          "sequence": 137,
+          "of_stops": 166,
+          "direction": "down",
+          "prev_stop": "해모로월드뷰",
+          "next_stop": "테크노파크역"
+        },
+        {
+          "route_number": "순환41",
+          "route_id": "165000514",
+          "company": "인천교통공사",
+          "sequence": 38,
+          "of_stops": 94,
+          "direction": "up",
+          "prev_stop": "해모로월드뷰",
+          "next_stop": "캠퍼스타운역"
+        }
+      ]
+    },
+    {
+      "stop_id": "165000929",
+      "stop_number": "39929",
+      "stop_name": "송도테크노파크IT센터",
+      "routes": [
+        {
+          "route_number": "1302",
+          "route_id": "165000421",
+          "company": "더월드교통",
+          "sequence": 4,
+          "of_stops": 81,
+          "direction": "up",
+          "prev_stop": "글로벌파크베르디움",
+          "next_stop": "연세대"
+        },
+        {
+          "route_number": "303-1",
+          "route_id": "165000350",
+          "company": "강인교통",
+          "sequence": 59,
+          "of_stops": 77,
+          "direction": "down",
+          "prev_stop": "테크노파크역",
+          "next_stop": "연세대"
+        },
+        {
+          "route_number": "4401",
+          "route_id": "161000027",
+          "company": "삼환교통",
+          "sequence": 68,
+          "of_stops": 74,
+          "direction": "down",
+          "prev_stop": "테크노파크역",
+          "next_stop": "연세대"
+        },
+        {
+          "route_number": "4403",
+          "route_id": "161000038",
+          "company": "신흥교통",
+          "sequence": 62,
+          "of_stops": 65,
+          "direction": "down",
+          "prev_stop": "캠퍼스타운역",
+          "next_stop": "연세대"
+        },
+        {
+          "route_number": "9201",
+          "route_id": "165000245",
+          "company": "인강여객",
+          "sequence": 9,
+          "of_stops": 55,
+          "direction": "up",
+          "prev_stop": "캠퍼스타운역",
+          "next_stop": "연세대"
+        },
+        {
+          "route_number": "순환42",
+          "route_id": "165000515",
+          "company": "인천교통공사",
+          "sequence": 49,
+          "of_stops": 105,
+          "direction": "up",
+          "prev_stop": "캠퍼스타운역",
+          "next_stop": "연세대"
+        }
+      ]
+    },
+    {
+      "stop_id": "165000938",
+      "stop_number": "39938",
+      "stop_name": "테크노파크IT센터",
+      "routes": [
+        {
+          "route_number": "1302",
+          "route_id": "165000421",
+          "company": "더월드교통",
+          "sequence": 78,
+          "of_stops": 81,
+          "direction": "down",
+          "prev_stop": "연세대",
+          "next_stop": "글로벌캠퍼스푸르지오"
+        },
+        {
+          "route_number": "303-1",
+          "route_id": "165000350",
+          "company": "강인교통",
+          "sequence": 20,
+          "of_stops": 77,
+          "direction": "up",
+          "prev_stop": "연세대",
+          "next_stop": "테크노파크역"
+        },
+        {
+          "route_number": "4401",
+          "route_id": "161000027",
+          "company": "삼환교통",
+          "sequence": 3,
+          "of_stops": 74,
+          "direction": "up",
+          "prev_stop": "연세대",
+          "next_stop": "테크노파크역"
+        },
+        {
+          "route_number": "4403",
+          "route_id": "161000038",
+          "company": "신흥교통",
+          "sequence": 4,
+          "of_stops": 65,
+          "direction": "up",
+          "prev_stop": "연세대",
+          "next_stop": "캠퍼스타운역"
+        },
+        {
+          "route_number": "9",
+          "route_id": "165000334",
+          "company": "성민버스",
+          "sequence": 7,
+          "of_stops": 143,
+          "direction": "up",
+          "prev_stop": "박문여자고등학교",
+          "next_stop": "테크노파크역"
+        },
+        {
+          "route_number": "9201",
+          "route_id": "165000245",
+          "company": "인강여객",
+          "sequence": 48,
+          "of_stops": 55,
+          "direction": "down",
+          "prev_stop": "연세대",
+          "next_stop": "캠퍼스타운역"
+        },
+        {
+          "route_number": "순환42",
+          "route_id": "165000515",
+          "company": "인천교통공사",
+          "sequence": 58,
+          "of_stops": 105,
+          "direction": "down",
+          "prev_stop": "연세대",
+          "next_stop": "캠퍼스타운역"
+        },
+        {
+          "route_number": "연수02",
+          "route_id": "161000035",
+          "company": "인천그린모빌리티(주)",
+          "sequence": 8,
+          "of_stops": 17,
+          "direction": "down",
+          "prev_stop": "박문여자고등학교",
+          "next_stop": "테크노파크역"
+        }
+      ]
+    }
+  ]
+}

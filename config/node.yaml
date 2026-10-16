@@ -1,0 +1,41 @@
+# Master configuration. Shared by all teams: announce changes in the group chat.
+node:
+  id: EDGE_NODE_SKELETON        # change to your team's node id
+  lat: 37.3888
+  lon: 126.6534
+
+paths:                          # relative paths are resolved from the repo root
+  db: data/songdo_edge.db
+  backups: data/backups
+  pidfile: data/run/pids.json
+  schema: sql/schema.sql
+  static: src/edge/ui
+  socket: /tmp/songdo_edge.sock
+
+network:
+  api_host: 127.0.0.1
+  api_port: 8000
+
+ipc:
+  queue_maxsize: 500            # bounded queue, drop_oldest policy
+
+sensor:
+  interval_s: 0.5
+  streams:                      # EXAMPLE streams: replace with your team's sensors
+    - {name: INDOOR_CO2_PPM, unit: ppm, base: 650, noise: 60, spike_prob: 0.05, spike_value: 1200}
+    - {name: ROOM_TEMP_C,    unit: C,   base: 23,  noise: 0.5, spike_prob: 0.0,  spike_value: 23}
+
+rules:                          # EXAMPLE rule (OS1-3 style): replace with your team's rules
+  - {name: co2_vent, sensor: INDOOR_CO2_PPM, op: ">", threshold: 1000, actuator: HVAC_DAMPER_PCT, command: 100, ttl_s: 15.0}
+
+supervisor:
+  max_restarts: 5               # per window
+  window_s: 60
+  restart_delay_s: 0.5
+
+sync:
+  batch_size: 50
+  interval_s: 1.0
+
+health:
+  interval_s: 2.0

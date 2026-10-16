@@ -1,0 +1,19 @@
+# TEMPLATE (Ops owner: verify on Ubuntu).  Install:
+#   mkdir -p ~/.config/systemd/user && cp systemd/songdo-edge@.service ~/.config/systemd/user/
+#   systemctl --user daemon-reload && systemctl --user start songdo-edge@OS1.service
+[Unit]
+Description=Songdo Edge node %i
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+Type=simple
+WorkingDirectory=%h/songdo-edge-intelligence
+Environment=PYTHONPATH=src
+ExecStart=%h/songdo-edge-intelligence/.venv/bin/python -m edge.supervisor --config config/node.yaml
+Restart=on-failure
+RestartSec=2
+MemoryMax=512M
+
+[Install]
+WantedBy=default.target

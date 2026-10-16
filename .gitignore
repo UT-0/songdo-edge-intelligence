@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+data/*.db
+data/*.db-wal
+data/*.db-shm
+data/backups/*
+data/run/*
+!data/backups/.gitkeep
+!data/run/.gitkeep
+.idea/
+.vscode/

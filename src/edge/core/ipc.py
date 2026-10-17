@@ -11,6 +11,35 @@ import time
 STOP = "__STOP__"   # shutdown sentinel
 
 
+class StopFlag:
+    """Cross-process stop flag with the same API as multiprocessing.Event (set / is_set / wait).
+
+    Why not multiprocessing.Event? If a process is SIGKILLed while blocked in Event.wait(),
+    the Event's internal condition keeps a phantom sleeper and a later Event.set() blocks
+    forever, so the supervisor could never shut down after a crash test. This flag is a raw
+    shared integer: there is no lock to poison.
+    """
+
+    def __init__(self, ctx=None):
+        ctx = ctx or mp.get_context("spawn")
+        self._v = ctx.RawValue("i", 0)
+
+    def set(self):
+        self._v.value = 1
+
+    def is_set(self):
+        return bool(self._v.value)
+
+    def wait(self, timeout=None):
+        end = None if timeout is None else time.monotonic() + timeout
+        while not self._v.value:
+            remaining = None if end is None else end - time.monotonic()
+            if remaining is not None and remaining <= 0:
+                break
+            time.sleep(0.02 if remaining is None else min(0.02, remaining))
+        return bool(self._v.value)
+
+
 class BoundedQueue:
     """Process-safe queue with a hard cap. When full, the OLDEST item is dropped.
 

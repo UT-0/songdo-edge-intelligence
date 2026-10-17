@@ -9,7 +9,7 @@ import unittest
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "src"))
 
-from edge.core.ipc import BoundedQueue, UnixSocketServer, unix_request   # noqa: E402
+from edge.core.ipc import BoundedQueue, StopFlag, UnixSocketServer, unix_request   # noqa: E402
 from edge.core.models import EdgeDecision, SensorEvent                    # noqa: E402
 from edge.core.storage import Storage                                     # noqa: E402
 from edge.decision import RuleEngine, dispatch                            # noqa: E402
@@ -37,6 +37,40 @@ class TestBoundedQueue(unittest.TestCase):
         self.assertEqual(q.dropped, 200)
         self.assertEqual(items[0], 200)            # oldest 200 were dropped
         self.assertEqual(items[-1], 699)           # newest kept
+
+
+def _waiter(flag, ready):
+    ready.set()
+    flag.wait(30)
+
+
+class TestStopFlag(unittest.TestCase):
+    def test_set_wait_is_set(self):
+        flag = StopFlag()
+        self.assertFalse(flag.is_set())
+        self.assertFalse(flag.wait(0.05))          # times out, not set
+        flag.set()
+        self.assertTrue(flag.is_set())
+        self.assertTrue(flag.wait(0.05))
+
+    def test_set_does_not_hang_after_a_waiter_is_sigkilled(self):
+        """Regression: with multiprocessing.Event this deadlocked forever."""
+        import multiprocessing as mp
+        import signal
+        import threading
+        ctx = mp.get_context("spawn")
+        flag, ready = StopFlag(ctx), ctx.Event()
+        p = ctx.Process(target=_waiter, args=(flag, ready))
+        p.start()
+        self.assertTrue(ready.wait(10))
+        time.sleep(0.3)                            # the child is now inside flag.wait()
+        os.kill(p.pid, signal.SIGKILL)
+        p.join(5)
+        t = threading.Thread(target=flag.set, daemon=True)
+        t.start()
+        t.join(3)
+        self.assertFalse(t.is_alive(), "StopFlag.set() hung after a waiter was SIGKILLed")
+        self.assertTrue(flag.is_set())
 
 
 class TestStorage(unittest.TestCase):

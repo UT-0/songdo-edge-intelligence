@@ -14,7 +14,7 @@ from collections import deque
 
 from edge.api_server import api_main
 from edge.core.config import load_config
-from edge.core.ipc import STOP, BoundedQueue
+from edge.core.ipc import STOP, BoundedQueue, StopFlag
 from edge.core.storage import Storage
 from edge.sync_worker import sync_main
 from edge.workers import health_main, processor_main, sensor_gen_main
@@ -26,7 +26,7 @@ class Supervisor:
     def __init__(self, cfg):
         self.cfg = cfg
         self.ctx = mp.get_context("spawn")
-        self.stop_event = self.ctx.Event()
+        self.stop_event = StopFlag(self.ctx)   # lock-free: survives SIGKILLed waiters
         self.queue = BoundedQueue(cfg["ipc"]["queue_maxsize"], self.ctx)
         self.procs = {}
         self.restarts = {}

@@ -59,7 +59,7 @@ event+outbox write, idempotent drain with conservation check, online backup, mon
 engine, supervisor with crash restart and clean shutdown, /proc metrics, zero-dependency dashboard,
 WAN cut/restore end-to-end test, all five theme configs start and run.
 
-**Scenarios implemented so far:** OS3 (5/5, standalone, by Onill) and OS2 (5/5, standalone). Remaining: OS1, OS4, OS5. Run any scenario with `PYTHONPATH=src python -m edge.teams.<theme_folder>.<scenario>`.
+**Scenarios implemented so far:** OS1 (5/5, by Aidar; OS1-1 still lacks its VWorld cache), OS2 (5/5), OS3 (5/5, by Onill) and OS5 (5/5). Remaining: OS4. All run standalone with `PYTHONPATH=src python -m edge.teams.<theme_folder>.<scenario>`.
 
 **Still to build (the assignment):** the 25 scenario implementations and their tests, the 10-minute
 offline demo run, systemd and Docker files (templates provided, **not yet tested**), the report.

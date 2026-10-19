@@ -1,0 +1,14 @@
+# TEMPLATE, not run on a real systemd here. Enable with:
+#   systemctl --user enable --now songdo-backup@os4.timer      (check: systemctl --user list-timers)
+# Cron alternative (every 15 minutes):
+#   */15 * * * * cd ~/songdo-edge-intelligence && /usr/bin/flock -n /tmp/songdo_backup.lock ./scripts/backup.sh config/os4.yaml >> data/backup.log 2>&1
+[Unit]
+Description=Run the Songdo Edge backup for %i every 15 minutes
+
+[Timer]
+OnCalendar=*:0/15
+Persistent=true
+RandomizedDelaySec=30
+
+[Install]
+WantedBy=timers.target

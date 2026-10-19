@@ -12,6 +12,7 @@ bash scripts/setup.sh                     # .venv + dependencies + database
 PYTHONPATH=src python -m unittest discover -s tests -v
 bash scripts/start_demo.sh OS1            # theme OS1 -> http://127.0.0.1:8001  (OS2 -> 8002 ... OS5 -> 8005)
 bash scripts/start_demo.sh                # generic node  -> http://127.0.0.1:8000
+python3 scripts/run_all_scenarios.py     # run all 25 scenarios (a few minutes); --theme os4 for one theme
 ```
 In the dashboard: **Simulate WAN Internet Cut** -> events keep arriving, *Outbox queued* grows.
 **Restore WAN Connection** -> backlog drains, *Conserved* stays `yes`.
@@ -59,7 +60,9 @@ event+outbox write, idempotent drain with conservation check, online backup, mon
 engine, supervisor with crash restart and clean shutdown, /proc metrics, zero-dependency dashboard,
 WAN cut/restore end-to-end test, all five theme configs start and run.
 
-**Scenarios implemented so far:** OS1 (5/5, by Aidar; OS1-1 still lacks its VWorld cache), OS2 (5/5), OS3 (5/5, by Onill) and OS5 (5/5). Remaining: OS4. All run standalone with `PYTHONPATH=src python -m edge.teams.<theme_folder>.<scenario>`.
+**Scenarios: all 25 are implemented and pass** (`python3 scripts/run_all_scenarios.py`): OS1 (by Aidar), OS2, OS3 (by Onill), OS4, OS5. Each runs standalone with `PYTHONPATH=src python -m edge.teams.<theme_folder>.<scenario>`.
+
+**Known gaps (be honest about them in the defense):** OS1-1 has no cached VWorld GeoJSON and never maps readings to buildings; OS4-5 uses a SIMULATED AirKorea baseline until the real station-131233 CSV is added to `data/`; the scenarios are not wired into `start_demo.sh <theme>`; the 10-minute offline run has not been done end to end; the systemd units and Docker files are untested templates; Onill's OS3 scripts `build_bus_stops.py` and `os3_live_demo.py` are referenced but missing.
 
 **Still to build (the assignment):** the 25 scenario implementations and their tests, the 10-minute
 offline demo run, systemd and Docker files (templates provided, **not yet tested**), the report.

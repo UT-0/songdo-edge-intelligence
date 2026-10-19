@@ -1,0 +1,11 @@
+# TEMPLATE, not run on a real systemd here (Ops owner: verify on Ubuntu with systemd-analyze verify).
+# Instance = config name, e.g. songdo-backup@os4.service backs up the database of config/os4.yaml.
+# Install: cp systemd/songdo-backup@.* ~/.config/systemd/user/ && systemctl --user daemon-reload
+[Unit]
+Description=Songdo Edge online database backup (%i)
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/songdo-edge-intelligence
+# outer flock (handbook style) + the script's own inner flock on a DIFFERENT lock file
+ExecStart=/usr/bin/flock -n /tmp/songdo_backup.lock %h/songdo-edge-intelligence/scripts/backup.sh config/%i.yaml

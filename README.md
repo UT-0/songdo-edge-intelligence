@@ -62,7 +62,7 @@ WAN cut/restore end-to-end test, all five theme configs start and run.
 
 **Scenarios: all 25 are implemented and pass** (`python3 scripts/run_all_scenarios.py`): OS1 (by Aidar), OS2, OS3 (by Onill), OS4, OS5. Each runs standalone with `PYTHONPATH=src python -m edge.teams.<theme_folder>.<scenario>`.
 
-**Known gaps (be honest about them in the defense):** OS1-1 has no cached VWorld GeoJSON and never maps readings to buildings; OS4-5 uses a SIMULATED AirKorea baseline until the real station-131233 CSV is added to `data/`; the scenarios are not wired into `start_demo.sh <theme>`; the 10-minute offline run has not been done end to end; the systemd units and Docker files are untested templates; Onill's OS3 scripts `build_bus_stops.py` and `os3_live_demo.py` are referenced but missing.
+**Known gaps (be honest about them in the defense):** OS1-1 now maps readings to buildings, but only against a hand-made SAMPLE footprint file (`data/vworld_buildings_SAMPLE.geojson`) until the real VWorld export is saved as `data/vworld_buildings.geojson`; OS4-5 uses a SIMULATED AirKorea baseline until the real station-131233 CSV is added to `data/`; the scenarios are not wired into `start_demo.sh <theme>`; the 10-minute offline run has not been done end to end; the systemd units and Docker files are untested templates; Onill's OS3 scripts `build_bus_stops.py` and `os3_live_demo.py` are referenced but missing.
 
 **Still to build (the assignment):** the 25 scenario implementations and their tests, the 10-minute
 offline demo run, systemd and Docker files (templates provided, **not yet tested**), the report.

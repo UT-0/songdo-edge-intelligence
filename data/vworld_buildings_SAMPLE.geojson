@@ -1,0 +1,13 @@
+{
+  "type": "FeatureCollection",
+  "name": "vworld_buildings_SAMPLE",
+  "note": "SAMPLE footprints drawn by hand around Songdo Convensia for testing. NOT real VWorld data. Replace by exporting the real VWorld facility layer (LT_P_DGPRT) to data/vworld_buildings.geojson.",
+  "features": [
+    {"type": "Feature", "id": "B-CONVENSIA",
+     "properties": {"building_id": "B-CONVENSIA", "name": "Songdo Convensia (SAMPLE footprint)", "source": "SAMPLE"},
+     "geometry": {"type": "Polygon", "coordinates": [[[126.6520, 37.3880], [126.6548, 37.3880], [126.6548, 37.3896], [126.6520, 37.3896], [126.6520, 37.3880]]]}},
+    {"type": "Feature", "id": "B-OFFICE",
+     "properties": {"building_id": "B-OFFICE", "name": "Neighbouring office block (SAMPLE footprint)", "source": "SAMPLE"},
+     "geometry": {"type": "Polygon", "coordinates": [[[126.6552, 37.3880], [126.6575, 37.3880], [126.6575, 37.3896], [126.6552, 37.3896], [126.6552, 37.3880]]]}}
+  ]
+}

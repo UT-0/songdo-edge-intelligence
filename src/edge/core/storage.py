@@ -5,6 +5,9 @@ import sqlite3
 import time
 from contextlib import contextmanager
 
+from edge.core.models import SensorEvent
+from edge.decision import dispatch
+
 
 class Storage:
     def __init__(self, db_path, schema_path, init=True):
@@ -61,6 +64,93 @@ class Storage:
         return self._read("PRAGMA journal_mode")[0]["journal_mode"]
 
     # ---- events + outbox ----
+    def accept_event(self, event):
+        """Commit an event to the runtime inbox; return False for a repeated ID."""
+        with self.tx() as c:
+            cur = c.execute(
+                "INSERT INTO runtime_inbox (event_id,payload) VALUES (?,?) "
+                "ON CONFLICT(event_id) DO NOTHING",
+                (event.event_id, json.dumps(event.to_dict())))
+            return cur.rowcount == 1
+
+    def pending_inbox(self, limit=50):
+        """Return the oldest unprocessed handoffs from the durable inbox."""
+        return self._read(
+            "SELECT seq,payload FROM runtime_inbox WHERE done=0 ORDER BY seq LIMIT ?",
+            (limit,))
+
+    def process_inbox_event(self, seq, engine):
+        """Commit one pending row and all its database effects atomically.
+
+        Dispatch is the local simulation only. This transaction does not provide
+        an exactly-once guarantee for an external physical actuator.
+        """
+        with self.tx() as c:
+            row = c.execute(
+                "SELECT event_id,payload FROM runtime_inbox WHERE seq=? AND done=0",
+                (seq,)).fetchone()
+            if row is None:
+                return False
+            event = SensorEvent.from_dict(json.loads(row["payload"]))
+            if event.event_id != row["event_id"]:
+                raise ValueError("runtime inbox payload event_id does not match its key")
+            event.received_at = time.time()
+            cur = c.execute(
+                "INSERT INTO sensor_events "
+                "(event_id,node_id,sensor,value,unit,observed_at,received_at) VALUES (?,?,?,?,?,?,?) "
+                "ON CONFLICT(event_id) DO NOTHING",
+                (event.event_id, event.node_id, event.sensor, event.value,
+                 event.unit, event.observed_at, event.received_at))
+            if cur.rowcount:
+                c.execute("INSERT INTO outbox (event_id,payload,enqueued_at) VALUES (?,?,?)",
+                          (event.event_id, json.dumps(event.to_dict()), time.time()))
+                for d in engine.evaluate(event):
+                    status = dispatch(d)
+                    c.execute(
+                        "INSERT INTO edge_decisions (decision_id,event_id,rule,actuator,command_value,"
+                        "issued_mono,expires_mono,status,created_at) VALUES (?,?,?,?,?,?,?,?,?)",
+                        (d.decision_id, d.event_id, d.rule, d.actuator, d.command_value,
+                         d.issued_mono, d.expires_mono, status, d.created_at))
+            c.execute("UPDATE runtime_inbox SET done=1 WHERE seq=?", (seq,))
+            return True
+
+    def ingestion_report(self):
+        """Read inbox conservation and ID relationships in one SQLite snapshot.
+
+        Standalone sensor rows need not belong to the shared runtime inbox.
+        Counts alone cannot detect missing rows replaced by unrelated IDs.
+        """
+        row = self._read("""
+            SELECT
+              (SELECT COUNT(*) FROM runtime_inbox) AS accepted,
+              (SELECT COUNT(*) FROM runtime_inbox WHERE done=0) AS pending,
+              (SELECT COUNT(*) FROM runtime_inbox WHERE done=1) AS completed,
+              NOT EXISTS (
+                SELECT 1 FROM runtime_inbox i
+                LEFT JOIN sensor_events e ON e.event_id=i.event_id
+                LEFT JOIN outbox o ON o.event_id=i.event_id
+                WHERE i.done NOT IN (0,1)
+                   OR (i.done=1 AND (e.event_id IS NULL OR o.event_id IS NULL))
+              ) AND NOT EXISTS (
+                SELECT 1 FROM outbox o
+                LEFT JOIN sensor_events e ON e.event_id=o.event_id
+                LEFT JOIN upstream_sink s ON s.event_id=o.event_id
+                WHERE e.event_id IS NULL
+                   OR (o.sent_at IS NOT NULL AND s.event_id IS NULL)
+                   OR (o.sent_at IS NULL AND s.event_id IS NOT NULL)
+              ) AND NOT EXISTS (
+                SELECT 1 FROM upstream_sink s
+                LEFT JOIN outbox o ON o.event_id=s.event_id
+                WHERE o.event_id IS NULL
+              ) AND NOT EXISTS (
+                SELECT 1 FROM edge_decisions d
+                LEFT JOIN sensor_events e ON e.event_id=d.event_id
+                WHERE e.event_id IS NULL
+              ) AS consistent
+        """)[0]
+        row["consistent"] = bool(row["consistent"])
+        return row
+
     def insert_event_with_outbox(self, event):
         """Store the event AND enqueue it in the outbox atomically.
         Returns False if the event_id was already stored (duplicate ignored)."""
@@ -94,12 +184,14 @@ class Storage:
 
     def conservation_report(self):
         """Event conservation: every stored event is either in the sink or still pending."""
-        q = lambda sql: self._read(sql)[0]["n"]
-        events = q("SELECT COUNT(*) AS n FROM sensor_events")
-        sink = q("SELECT COUNT(*) AS n FROM upstream_sink")
-        pending = q("SELECT COUNT(*) AS n FROM outbox WHERE sent_at IS NULL")
-        return {"events": events, "sink": sink, "pending": pending,
-                "conserved": events == sink + pending}
+        row = self._read("""
+            SELECT
+              (SELECT COUNT(*) FROM sensor_events) AS events,
+              (SELECT COUNT(*) FROM upstream_sink) AS sink,
+              (SELECT COUNT(*) FROM outbox WHERE sent_at IS NULL) AS pending
+        """)[0]
+        row["conserved"] = row["events"] == row["sink"] + row["pending"]
+        return row
 
     # ---- decisions ----
     def insert_decision(self, d):

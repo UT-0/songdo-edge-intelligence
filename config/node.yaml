@@ -17,7 +17,7 @@ network:
   api_port: 8000
 
 ipc:
-  queue_maxsize: 500            # bounded queue, drop_oldest policy
+  queue_maxsize: 500            # standalone queue demos; unused by shared runtime
 
 sensor:
   interval_s: 0.5

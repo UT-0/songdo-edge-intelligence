@@ -1,7 +1,9 @@
 # Songdo Edge Intelligence (OS course project)
 
-A multi-process Linux edge node that keeps working when the WAN is cut, then drains its durable
-outbox with zero lost events. Python 3.12 + SQLite (WAL) + standard library (plus `pyyaml`).
+A multi-process Linux edge node designed to accept sensor events durably while offline, then drain
+its outbox to a simulated upstream when the WAN returns. The shared runtime's SQLite inbox is
+intended to preserve accepted events across process crashes; Linux crash recovery and the full
+offline-to-online run still need validation. Python 3.12 + SQLite (WAL) + standard library (plus `pyyaml`).
 
 The handbook defines **5 themes (OS1 to OS5) x 5 scenarios = 25 scenarios**. All 25 share one core.
 
@@ -19,11 +21,14 @@ In the dashboard: **Simulate WAN Internet Cut** -> events keep arriving, *Outbox
 
 ## How it works
 ```
-SensorGen --(BoundedQueue 500, drop_oldest)--> Processor --> SQLite (events, decisions, outbox)
+SensorGen --> SQLite runtime_inbox --> Processor --> SQLite (events, decisions, outbox)
 HealthMon (/proc -> process_health)                |
 API (http.server dashboard, /api/status, /api/wan/*)   SyncWorker (drains outbox only while WAN online)
 Supervisor starts, monitors, restarts and cleanly stops everything.
 ```
+The shared runtime handoff is the SQLite inbox; `ipc.queue_maxsize` is currently accepted but
+unused by that runtime. The bounded queue remains available to standalone scenario demonstrations.
+See [docs/crash-safety.md](docs/crash-safety.md) for the inbox transaction and shutdown behavior.
 
 ## Layout: what is shared, what belongs to a scenario
 ```
@@ -32,7 +37,7 @@ sql/schema.sql                            SHARED tables
 src/edge/core/                            SHARED core (models, ipc, storage, procfs, config)
 src/edge/supervisor.py, workers.py, sync_worker.py, decision.py, api_server.py   SHARED pipeline
 src/edge/teams/os1_building/ ... os5_reliable/    ONE FILE PER SCENARIO (25 files)
-tests/test_core.py, test_pipeline.py, test_configs.py   shared tests
+tests/test_core.py, test_pipeline.py, test_configs.py, test_durable_inbox.py   shared tests
 tests/os1/ ... tests/os5/                 scenario tests (create test_<scenario>.py)
 scripts/, systemd/, container/            ops
 ```
@@ -54,18 +59,40 @@ Each mini team owns one theme: its folder, its config, its `tests/<theme>/` fold
 | Team 4 | OS4 IoT Edge Gateway | `src/edge/teams/os4_iot/` | `config/os4.yaml` | 8004 | | OS4-1 Heterogeneous Multi-Stream Sensor Ingestion<br>OS4-2 Event-Time vs. Receipt-Time Handling<br>OS4-3 Dust Suppression Mist Cannon Relay Actuation<br>OS4-4 Scheduled Database Backup via systemd Timer / Cron<br>OS4-5 WAN Outage Backlog Drain & AirKorea Baseline Benchmark |
 | Team 5 | OS5 Fault-Tolerant Smart-City Node | `src/edge/teams/os5_reliable/` | `config/os5.yaml` | 8005 | | OS5-1 Health Check Architecture & Readiness State Machine<br>OS5-2 Disposable Worker Kill & Preserved State Recovery<br>OS5-3 Deadlock Detection & Mutex Timeout Recovery<br>OS5-4 Disaster Flood Relief Sluice Gate Actuation<br>OS5-5 Compound Failure Survivability (WAN Cut + Worker Crash) |
 
-## Done vs. still to build
-**Done and tested:** bounded queue (drop_oldest), Unix socket framing, SQLite WAL + atomic
-event+outbox write, idempotent drain with conservation check, online backup, monotonic-TTL rule
-engine, supervisor with crash restart and clean shutdown, /proc metrics, zero-dependency dashboard,
-WAN cut/restore end-to-end test, all five theme configs start and run.
+## Implementation and validation status
+Selected shared component checks were run on Windows using Python 3.14.5 and PyYAML 6.0.3. The
+focused test invocation ran 22 tests: 20 passed and 2 Linux integration tests skipped. A supplemental
+primitive invocation passed 2 checks and errored on the Unix socket test because `socket.AF_UNIX` is
+unavailable in this Windows interpreter. `compileall` for `src` and `tests` and parsing the four theme
+configs also passed. See [docs/crash-safety.md](docs/crash-safety.md) for commands and scope.
 
-**Scenarios: all 25 are implemented and pass** (`python3 scripts/run_all_scenarios.py`): OS1 (by Aidar), OS2, OS3 (by Onill), OS4, OS5. Each runs standalone with `PYTHONPATH=src python -m edge.teams.<theme_folder>.<scenario>`.
+These checks do not validate Linux `SIGKILL`, the shared `processor_main` recovery path, or supervised
+worker restart and WAN behavior. Linux execution has not been completed; the full test suite and
+all-scenario regression run remain pending.
+
+Phase 4 adds a reproducible Linux verifier and GitHub Actions workflow. On Linux or WSL2 with Python
+3.12+, run:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python scripts/verify_linux.py
+```
+
+It runs the full unit suite and all 25 scenario modules, writing logs and JSON summaries to a new
+unique `data/verification/` directory. See
+[docs/crash-safety.md](docs/crash-safety.md) for artifact details and the pending Linux validation
+status. The verifier's portable unit tests passed locally, but the Linux checks have not yet run.
+
+Scenario modules and tests are present in the tree, but the claim that all 25 scenarios pass is not
+currently verified. Run `PYTHONPATH=src python scripts/run_all_scenarios.py` in a supported Linux
+environment and record its output before making a pass claim.
 
 **Known gaps (be honest about them in the defense):** OS1-1 now maps readings to buildings, but only against a hand-made SAMPLE footprint file (`data/vworld_buildings_SAMPLE.geojson`) until the real VWorld export is saved as `data/vworld_buildings.geojson`; OS2-5 drives an APPROXIMATE Central Park path (`data/os2_central_park_pathway2_SAMPLE.geojson`) with a SIMULATED LiDAR trace (`data/os2_sensor_trace_SIMULATED.csv`), both made by `python3 scripts/generate_os2_sim_data.py` (fixed seed), until a real pathway export replaces the SAMPLE file; OS4-5 uses a SIMULATED AirKorea baseline until the real station-131233 CSV is added to `data/`; the scenarios are not wired into `start_demo.sh <theme>`; the 10-minute offline run has not been done end to end; the systemd units and Docker files are untested templates; Onill's OS3 scripts `build_bus_stops.py` and `os3_live_demo.py` are referenced but missing.
 
-**Still to build (the assignment):** the 25 scenario implementations and their tests, the 10-minute
-offline demo run, systemd and Docker files (templates provided, **not yet tested**), the report.
+**Still to validate or complete:** confirm the 25 scenario implementations and tests by running them;
+perform the 10-minute offline demo; validate the systemd and Docker templates; and complete the report.
 
 ## Git workflow
 1. `main` always runs: never push broken code to it.

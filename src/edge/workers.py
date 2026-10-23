@@ -4,13 +4,11 @@ import logging
 import random
 import signal
 import time
-from queue import Empty
 
-from edge.core.ipc import STOP
 from edge.core.models import ProcessHealth, SensorEvent
 from edge.core.procfs import ProcSampler
 from edge.core.storage import Storage
-from edge.decision import RuleEngine, dispatch
+from edge.decision import RuleEngine
 
 
 def _init(name):
@@ -19,39 +17,45 @@ def _init(name):
     return logging.getLogger(name)
 
 
-def sensor_gen_main(cfg, q, stop):
+def sensor_gen_main(cfg, stop):
     _init("SensorGen")
+    storage = Storage(cfg["paths"]["db"], cfg["paths"]["schema"], init=False)
     rng = random.Random()
     node = cfg["node"]["id"]
     while not stop.is_set():
         for s in cfg["sensor"]["streams"]:
+            if stop.is_set():
+                break
             value = s["base"] + rng.gauss(0, s.get("noise", 0))
             if rng.random() < s.get("spike_prob", 0):
                 value = s["spike_value"]
             ev = SensorEvent(node_id=node, sensor=s["name"], value=round(value, 2), unit=s.get("unit", ""))
-            q.put(ev.to_dict())
+            storage.accept_event(ev)
         stop.wait(cfg["sensor"]["interval_s"])
 
 
-def processor_main(cfg, q, stop):
+def processor_main(cfg, stop):
     log = _init("Processor")
     storage = Storage(cfg["paths"]["db"], cfg["paths"]["schema"], init=False)
     engine = RuleEngine(cfg["rules"])
+    drain_deadline = None
     while True:
-        try:
-            item = q.get(timeout=0.5)
-        except Empty:
-            if stop.is_set():
-                break
-            continue
-        if item == STOP:
+        if stop.is_set() and drain_deadline is None:
+            drain_deadline = time.monotonic() + 3.0
+        if drain_deadline is not None and time.monotonic() >= drain_deadline:
             break
-        ev = SensorEvent.from_dict(item)
-        ev.received_at = time.time()
-        storage.insert_event_with_outbox(ev)
-        for d in engine.evaluate(ev):
-            storage.insert_decision(d)
-            storage.set_decision_status(d.decision_id, dispatch(d))
+        rows = storage.pending_inbox(limit=50)
+        if not rows:
+            if drain_deadline is not None:
+                break
+            stop.wait(0.05)
+            continue
+        for row in rows:
+            if stop.is_set() and drain_deadline is None:
+                drain_deadline = time.monotonic() + 3.0
+            if drain_deadline is not None and time.monotonic() >= drain_deadline:
+                break
+            storage.process_inbox_event(row["seq"], engine)
     log.info("exiting cleanly")
 
 

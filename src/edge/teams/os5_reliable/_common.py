@@ -11,9 +11,9 @@ the gate state, mark the row done). A SIGKILL at any instant therefore leaves ei
 row's effects or none of them, and the restarted worker simply continues with the rows that are
 not done yet. Result: zero loss and zero duplicates (event_id is also unique).
 
-Honest note: the shared node pipeline (edge/workers.py) hands events over through an in-memory
-queue, so a SIGKILL can lose the single event that was in flight. The inbox design below is what
-gives the "without data loss" guarantee that OS5-2 asks for.
+The shared node runtime accepts events through its SQLite runtime_inbox, whose processing path
+commits event, outbox, decisions, and completion atomically. This OS5-specific inbox remains a
+separate implementation for the scenario demonstrations below.
 """
 import json
 import multiprocessing as mp

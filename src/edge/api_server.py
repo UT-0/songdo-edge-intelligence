@@ -33,6 +33,7 @@ def make_handler(cfg, storage):
                     "outbox_pending": storage.outbox_pending(),
                     "counts": storage.counts(),
                     "conservation": storage.conservation_report(),
+                    "ingestion": storage.ingestion_report(),
                     "processes": storage.list_health()})
             elif self.path in ("/", "/index.html"):
                 with open(index_path, "rb") as f:

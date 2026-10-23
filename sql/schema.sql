@@ -1,6 +1,15 @@
 -- Shared schema. Changes here affect everyone: announce them in the group chat.
 PRAGMA journal_mode=WAL;
 
+-- Shared runtime handoff: acceptance commits here before the processor can read it.
+CREATE TABLE IF NOT EXISTS runtime_inbox (
+  seq      INTEGER PRIMARY KEY AUTOINCREMENT,
+  event_id TEXT NOT NULL UNIQUE,
+  payload  TEXT NOT NULL,
+  done     INTEGER NOT NULL DEFAULT 0 CHECK (done IN (0, 1))
+);
+CREATE INDEX IF NOT EXISTS idx_runtime_inbox_pending ON runtime_inbox(done, seq);
+
 CREATE TABLE IF NOT EXISTS sensor_events (
   event_id    TEXT PRIMARY KEY,
   node_id     TEXT NOT NULL,

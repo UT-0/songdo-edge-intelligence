@@ -14,7 +14,7 @@ from collections import deque
 
 from edge.api_server import api_main
 from edge.core.config import load_config
-from edge.core.ipc import STOP, BoundedQueue, StopFlag
+from edge.core.ipc import StopFlag
 from edge.core.storage import Storage
 from edge.sync_worker import sync_main
 from edge.workers import health_main, processor_main, sensor_gen_main
@@ -27,17 +27,17 @@ class Supervisor:
         self.cfg = cfg
         self.ctx = mp.get_context("spawn")
         self.stop_event = StopFlag(self.ctx)   # lock-free: survives SIGKILLed waiters
-        self.queue = BoundedQueue(cfg["ipc"]["queue_maxsize"], self.ctx)
+        self.producer_stop_event = StopFlag(self.ctx)
         self.procs = {}
         self.restarts = {}
         self._restart_times = {}
         self._stopping = False
 
     def _specs(self):
-        c, q, s = self.cfg, self.queue, self.stop_event
+        c, s = self.cfg, self.stop_event
         return {
-            "SensorGen": (sensor_gen_main, (c, q, s)),
-            "Processor": (processor_main, (c, q, s)),
+            "SensorGen": (sensor_gen_main, (c, self.producer_stop_event)),
+            "Processor": (processor_main, (c, s)),
             "HealthMon": (health_main, (c, s)),
             "SyncWorker": (sync_main, (c, s)),
             "API": (api_main, (c, s)),
@@ -108,10 +108,15 @@ class Supervisor:
 
     def stop(self):
         self._stopping = True
+        self.producer_stop_event.set()
+        producer = self.procs.get("SensorGen")
+        if producer is not None:                 # stop and reap producer before draining
+            producer.join(5)
+            if producer.is_alive():
+                log.warning("SensorGen did not exit, terminating")
+                producer.terminate()
+                producer.join(2)
         self.stop_event.set()
-        if "SensorGen" in self.procs:                 # stop the producer first
-            self.procs["SensorGen"].join(5)
-        self.queue.put(STOP)
         for name, p in self.procs.items():
             p.join(5)
             if p.is_alive():

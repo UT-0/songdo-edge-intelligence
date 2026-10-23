@@ -13,6 +13,7 @@
 <p><button onclick="post('cut')">Simulate WAN Internet Cut</button>
    <button onclick="post('restore')">Restore WAN Connection</button></p>
 <p>Events: <b id="ev">0</b> | Decisions: <b id="dec">0</b> | Outbox queued: <b id="ob">0</b> | Delivered: <b id="sink">0</b> | Conserved: <b id="cons">-</b></p>
+<p>Accepted: <b id="accepted">0</b> | Inbox backlog: <b id="inbox">0</b> | Completed: <b id="completed">0</b> | Ingestion consistent: <b id="ingestionCons">-</b></p>
 <table><thead><tr><th>Process</th><th>PID</th><th>State</th><th>CPU %</th><th>RSS (kB)</th><th>Ctx vol</th><th>Ctx invol</th><th>Restarts</th></tr></thead>
 <tbody id="rows"></tbody></table>
 <script>
@@ -25,6 +26,8 @@ async function refresh(){
   ev.textContent=s.counts.events;dec.textContent=s.counts.decisions;
   ob.textContent=s.outbox_pending;sink.textContent=s.counts.sink;
   cons.textContent=s.conservation.conserved?'yes':'NO';
+  accepted.textContent=s.ingestion.accepted;inbox.textContent=s.ingestion.pending;
+  completed.textContent=s.ingestion.completed;ingestionCons.textContent=s.ingestion.consistent?'yes':'NO';
   rows.innerHTML=s.processes.map(p=>`<tr><td>${p.name}</td><td>${p.pid}</td><td>${p.state}</td><td>${p.cpu_pct}</td><td>${p.rss_kb}</td><td>${p.ctx_voluntary}</td><td>${p.ctx_involuntary}</td><td>${p.restarts}</td></tr>`).join('');
  }catch(e){wan.textContent='API unreachable';wan.className='badge off';}
 }

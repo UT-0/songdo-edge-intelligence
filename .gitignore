@@ -10,3 +10,4 @@ data/run/*
 !data/run/.gitkeep
 .idea/
 .vscode/
+data/verification/
